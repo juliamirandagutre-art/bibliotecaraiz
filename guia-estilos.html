@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biblioteca — Raíz</title>
+<link rel="icon" type="image/svg+xml" href="icono-silla.svg">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;900&family=Archivo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --rojo: #da3721;
+    --crema: #fefae0;
+    --azul: #312783;
+    --negro: #000000;
+    --blanco: #fefae0;
+    --naranja: #f07030;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  /* Cursor personalizado: cuadradito que sigue al mouse en toda la web */
+  #customCursor {
+    position: fixed;
+    width: 14px;
+    height: 14px;
+    border: 1px solid var(--rojo);
+    pointer-events: none;
+    z-index: 9999;
+    top: 0;
+    left: 0;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: opacity 0.2s ease, border-color 0.2s ease;
+    will-change: transform;
+  }
+
+  #customCursor.visible { opacity: 1; }
+
+  #customCursor.on-dark { border-color: var(--blanco); }
+
+  #customCursor::before,
+  #customCursor::after,
+  #customCursor .cc-corner-l,
+  #customCursor .cc-corner-r {
+    content: '';
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    background: var(--rojo);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: background 0.2s ease;
+  }
+
+  #customCursor::before { top: 0; left: 0; }
+  #customCursor::after { top: 0; left: 100%; }
+  #customCursor .cc-corner-l { top: 100%; left: 0; }
+  #customCursor .cc-corner-r { top: 100%; left: 100%; }
+
+  #customCursor.on-dark::before,
+  #customCursor.on-dark::after,
+  #customCursor.on-dark .cc-corner-l,
+  #customCursor.on-dark .cc-corner-r { background: var(--blanco); }
+
+  body {
+    font-family: 'Archivo', sans-serif;
+    background: var(--crema);
+    color: var(--negro);
+    overflow-x: hidden;
+  }
+
+  /* ── SUPER GRILLA DE FONDO ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(rgba(0,0,0,0.055) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,0,0,0.055) 1px, transparent 1px),
+      linear-gradient(rgba(49,39,131,0.13) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(49,39,131,0.13) 1px, transparent 1px);
+    background-size: 40px 40px, 40px 40px, 200px 200px, 200px 200px;
+  }
+
+  main { position: relative; z-index: 1; }
+
+  h1, h2, h3, .logo-mark { font-family: 'Poppins', sans-serif; }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 18px;
+    left: 50%;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: min(90vw, 1040px);
+    height: 58px;
+    padding: 0 1.15rem 0 1.45rem;
+    background: rgba(218,55,33,0.58);
+    border: 1px solid rgba(253,240,237,0.28);
+    border-radius: 0;
+    box-shadow: 0 16px 38px rgba(0,0,0,0.16);
+    backdrop-filter: blur(18px) saturate(145%);
+    -webkit-backdrop-filter: blur(18px) saturate(145%);
+    transform: translateX(-50%);
+    transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
+  }
+  nav.scrolled {
+    background: rgba(218,55,33,0.38);
+    border-color: rgba(253,240,237,0.34);
+    box-shadow: 0 18px 44px rgba(0,0,0,0.2);
+  }
+  .nav-logo { display: block; }
+  .nav-logo img { height: 26px; display: block; }
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: clamp(1rem, 2.1vw, 2rem);
+    list-style: none;
+  }
+  .nav-links a {
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(253,240,237,0.7);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--crema); }
+  .nav-cta {
+    color: rgba(253,240,237,0.7) !important;
+    background: none;
+    text-decoration: none;
+  }
+  .nav-cta:hover { color: var(--crema) !important; }
+
+  /* hamburger */
+  .hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 4px;
+  }
+  .hamburger span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: var(--crema);
+    transition: all 0.3s;
+  }
+  .mobile-menu {
+    display: none;
+    position: fixed;
+    top: 86px;
+    left: 5vw;
+    right: 5vw;
+    background: rgba(218,55,33,0.72);
+    border: 1px solid rgba(253,240,237,0.24);
+    border-radius: 0;
+    backdrop-filter: blur(18px) saturate(145%);
+    -webkit-backdrop-filter: blur(18px) saturate(145%);
+    padding: 1.5rem 5vw 2rem;
+    z-index: 99;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+  .mobile-menu a {
+    font-size: 0.9rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(254,250,224,0.85);
+    text-decoration: none;
+  }
+  .mobile-menu.open { display: flex; }
+
+  @media (max-width: 900px) {
+    nav {
+      top: 12px;
+      width: calc(100vw - 24px);
+      height: 56px;
+      padding: 0 1rem;
+    }
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
+    .mobile-menu {
+      top: 78px;
+      left: 12px;
+      right: 12px;
+    }
+  }
+
+
+  /* ── HERO ── */
+  .guide-hero {
+    min-height: 62vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 140px 8vw 4rem;
+    background: var(--rojo);
+    color: var(--crema);
+  }
+  .guide-hero .eyebrow {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--crema);
+    opacity: 0.75;
+    margin-bottom: 1.2rem;
+  }
+  .guide-hero h1 {
+    font-size: clamp(2.8rem, 7vw, 6rem);
+    font-weight: 300;
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+    max-width: 900px;
+    color: var(--crema);
+  }
+  .guide-hero h1 .highlight-box {
+    position: relative;
+    display: inline-block;
+    color: var(--crema);
+  }
+  .guide-hero h1 .highlight-box::before {
+    content: '';
+    position: absolute;
+    inset: -4px -8px;
+    background: var(--azul);
+    z-index: -1;
+  }
+  .guide-hero h1 .highlight-box span { position: relative; z-index: 1; }
+  .guide-hero p {
+    margin-top: 1.6rem;
+    font-size: 1rem;
+    font-weight: 300;
+    line-height: 1.5;
+    max-width: 480px;
+    color: rgba(253,240,237,0.75);
+  }
+
+  /* ── SECTION SCAFFOLD ── */
+  section.block {
+    padding: 5rem 8vw 6rem;
+    border-top: 2px solid var(--rojo);
+  }
+  .block-head {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.8rem;
+    margin-bottom: 3rem;
+  }
+  .block-num {
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--rojo);
+    letter-spacing: 0.1em;
+  }
+  .block-head h2 {
+    font-size: clamp(2rem, 3.4vw, 3rem);
+    font-weight: 300;
+  }
+  .block-note {
+    font-size: 1.05rem;
+    font-weight: 300;
+    color: rgba(0,0,0,0.6);
+    max-width: 560px;
+    line-height: 1.5;
+  }
+
+  /* Secciones con fondo de color, igual que se alternan en index.html / curso-tapizado.html */
+  .block-azul {
+    background: var(--azul);
+    color: var(--crema);
+    border-top-color: var(--crema);
+  }
+  .block-azul .block-num,
+  .block-azul .type-role,
+  .block-azul .resource-name { color: var(--crema); }
+  .block-azul .block-note,
+  .block-azul .type-spec,
+  .block-azul .resource-spec { color: rgba(253,240,237,0.7); }
+  .block-azul .type-row,
+  .block-azul .resource-row { border-color: rgba(253,240,237,0.24); }
+
+  .block-rojo {
+    background: var(--rojo);
+    color: var(--crema);
+    border-top-color: var(--crema);
+  }
+  .block-rojo .block-num,
+  .block-rojo .type-role,
+  .block-rojo .resource-name { color: var(--crema); }
+  .block-rojo .block-note,
+  .block-rojo .type-spec,
+  .block-rojo .resource-spec { color: rgba(253,240,237,0.7); }
+  .block-rojo .type-row,
+  .block-rojo .resource-row { border-color: rgba(253,240,237,0.24); }
+
+  .block-naranja {
+    background: var(--rojo);
+    color: var(--crema);
+    border-top-color: var(--crema);
+  }
+  .block-naranja .block-num,
+  .block-naranja .type-role,
+  .block-naranja .resource-name { color: var(--crema); }
+  .block-naranja .block-note,
+  .block-naranja .type-spec,
+  .block-naranja .resource-spec { color: rgba(253,240,237,0.75); }
+  .block-naranja .type-row,
+  .block-naranja .resource-row { border-color: rgba(253,240,237,0.28); }
+
+  .block-azul .shape-item .shape-label,
+  .block-rojo .shape-item .shape-label,
+  .block-naranja .shape-item .shape-label { color: rgba(253,240,237,0.7); }
+  .block-azul .shape-frame,
+  .block-rojo .shape-frame,
+  .block-naranja .shape-frame { border-color: var(--crema); }
+
+  /* ── TIPOGRAFÍA ── */
+  .type-row {
+    border-top: 1px solid rgba(0,0,0,0.14);
+    padding: 2.2rem 0;
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 2rem;
+    align-items: center;
+  }
+  .type-row:last-child { border-bottom: 1px solid rgba(0,0,0,0.14); }
+  .type-meta { display: flex; flex-direction: column; gap: 0.4rem; }
+  .type-role {
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--azul);
+  }
+  .type-spec {
+    font-family: monospace;
+    font-size: 0.72rem;
+    color: rgba(0,0,0,0.5);
+    line-height: 1.6;
+    white-space: pre-wrap;
+  }
+  .type-sample { overflow: hidden; color: var(--negro); }
+  .type-sample.poppins { font-family: 'Poppins', sans-serif; }
+  .type-sample.archivo { font-family: 'Archivo', sans-serif; }
+
+  /* ── COLORES ── */
+  .color-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1px;
+    background: rgba(0,0,0,0.15);
+    border: 1px solid rgba(0,0,0,0.15);
+  }
+  .color-card { background: var(--crema); }
+  .color-swatch { height: 160px; position: relative; }
+  .color-body { padding: 1.3rem 1.4rem; }
+  .color-name {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+  }
+  .color-hex {
+    font-family: monospace;
+    font-size: 0.8rem;
+    color: rgba(0,0,0,0.55);
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  .color-use {
+    font-size: 0.78rem;
+    color: rgba(0,0,0,0.55);
+    line-height: 1.4;
+  }
+  .color-var {
+    display: inline-block;
+    margin-top: 0.6rem;
+    font-family: monospace;
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+    background: rgba(0,0,0,0.06);
+  }
+
+  /* ── RECURSOS ── */
+  .resource-row {
+    border-top: 1px solid rgba(0,0,0,0.14);
+    padding: 2.6rem 0;
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 2rem;
+    align-items: center;
+  }
+  .resource-row:last-child { border-bottom: 1px solid rgba(0,0,0,0.14); }
+  .resource-meta { display: flex; flex-direction: column; gap: 0.4rem; }
+  .resource-name {
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+  .resource-spec {
+    font-family: monospace;
+    font-size: 0.72rem;
+    color: rgba(0,0,0,0.5);
+    line-height: 1.6;
+    white-space: pre-wrap;
+  }
+  .resource-demo {
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+    flex-wrap: wrap;
+  }
+
+  /* Rectángulo subrayado */
+  .underline-demo {
+    font-family: 'Poppins', sans-serif;
+    font-size: clamp(1.8rem, 3vw, 2.6rem);
+    font-weight: 300;
+    color: var(--negro);
+  }
+  .block-azul .underline-demo,
+  .block-rojo .underline-demo,
+  .block-naranja .underline-demo { color: var(--crema); }
+  .underline-demo .highlight-box {
+    position: relative;
+    display: inline-block;
+    color: var(--crema);
+    text-decoration: underline;
+    text-decoration-color: var(--crema);
+    text-underline-offset: 3px;
+    padding: 0 2px;
+  }
+  .underline-demo .highlight-box::before {
+    content: '';
+    position: absolute;
+    inset: -4px -8px;
+    background: var(--azul);
+    z-index: -1;
+  }
+
+  /* Grilla nombrada — mismo paso que .grid-svg/.grid-canvas del sitio (120px) */
+  .grid-swatch {
+    width: 240px;
+    height: 120px;
+    background-color: var(--crema);
+    background-image:
+      linear-gradient(rgba(49,39,131,0.35) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(49,39,131,0.35) 1px, transparent 1px);
+    background-size: 120px 120px;
+    border: 1px solid rgba(0,0,0,0.15);
+    flex-shrink: 0;
+  }
+
+  /* Formas geométricas */
+  .shape-set {
+    display: flex;
+    gap: 3rem;
+    flex-wrap: wrap;
+  }
+  .shape-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.7rem;
+  }
+  .shape-item .shape-label {
+    font-family: monospace;
+    font-size: 0.68rem;
+    color: rgba(0,0,0,0.5);
+    text-align: center;
+  }
+  .shape-circle {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--rojo);
+  }
+  .shape-diamond {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--azul);
+    margin: 26px 0;
+  }
+  .shape-frame {
+    position: relative;
+    width: 64px;
+    height: 64px;
+    border: 1px solid var(--negro);
+  }
+  .shape-frame::before,
+  .shape-frame::after,
+  .shape-frame .corner-l,
+  .shape-frame .corner-r {
+    content: '';
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: var(--rojo);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .shape-frame::before { top: 0; left: 0; }
+  .shape-frame::after { top: 0; left: 100%; }
+  .shape-frame .corner-l { top: 100%; left: 0; }
+  .shape-frame .corner-r { top: 100%; left: 100%; }
+
+  /* ── IMÁGENES ── */
+  /* Réplica exacta del efecto "ventanita" del hero de index.html:
+     una imagen base siempre visible y una segunda imagen que solo se
+     revela dentro de un cuadrado nítido que sigue al cursor. */
+  .spot-demo {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 720px;
+  }
+  .spot-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 2.5/1;
+    background: var(--crema);
+    border: 1px solid rgba(0,0,0,0.15);
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .block-azul .spot-wrap,
+  .block-rojo .spot-wrap { border-color: rgba(253,240,237,0.3); }
+  .spot-stack {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+  .spot-stack img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .spot-stack .img-base { opacity: 1; }
+  .spot-stack .img-reveal {
+    opacity: 0;
+    clip-path: inset(var(--ry,50%) var(--rx-r,50%) var(--ry-b,50%) var(--rx,50%));
+    transition: opacity 0.25s ease;
+  }
+  .spot-wrap.active .img-reveal { opacity: 1; }
+
+  /* Marco cuadrado que sigue al mouse — igual a .hero-spot-frame de index.html */
+  .spot-frame {
+    position: absolute;
+    width: 220px;
+    height: 220px;
+    left: var(--hx, 50%);
+    top: var(--hy, 50%);
+    transform: translate(-50%, -50%);
+    border: 1px solid rgba(253,240,237,0.65);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    z-index: 4;
+  }
+  .spot-wrap.active .spot-frame { opacity: 1; }
+  .spot-frame::before,
+  .spot-frame::after,
+  .spot-frame .corner-l,
+  .spot-frame .corner-r {
+    content: '';
+    position: absolute;
+    width: 9px;
+    height: 9px;
+    background: var(--crema);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .spot-frame::before { top: 0; left: 0; }
+  .spot-frame::after { top: 0; left: 100%; }
+  .spot-frame .corner-l { top: 100%; left: 0; }
+  .spot-frame .corner-r { top: 100%; left: 100%; }
+
+  .spot-label {
+    font-family: monospace;
+    font-size: 0.72rem;
+    color: rgba(0,0,0,0.6);
+  }
+  .block-rojo .spot-label { color: rgba(253,240,237,0.75); }
+  .spot-label .file-role {
+    display: block;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--crema);
+    margin-bottom: 0.3rem;
+  }
+
+  /* Segundo ejemplo — crossfade simple, igual a .servicios-img-stack de index.html */
+  .fade-demo {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 460px;
+    margin-top: 3rem;
+  }
+  .fade-img-stack {
+    position: relative;
+    width: 100%;
+  }
+  .fade-img-stack img {
+    position: relative;
+    width: 100%;
+    object-fit: contain;
+    transition: opacity 0.4s ease;
+  }
+  .fade-img-stack img.img-hover {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+  }
+  .fade-img-stack:hover img.img-base { opacity: 0; }
+  .fade-img-stack:hover img.img-hover { opacity: 1; }
+
+  /* Galería simple de assets nuevos (fotos sueltas, sin efecto hover) */
+  .asset-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    max-width: 720px;
+    margin-top: 3rem;
+  }
+  .asset-card img {
+    width: 100%;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+    border: 1px solid rgba(253,240,237,0.3);
+    display: block;
+  }
+  .asset-card .spot-label { margin-top: 0.7rem; }
+
+  footer {
+    padding: 3rem 8vw;
+    border-top: 2px solid var(--rojo);
+    font-size: 0.75rem;
+    color: rgba(0,0,0,0.45);
+  }
+
+  @media (max-width: 700px) {
+    .type-row, .resource-row { grid-template-columns: 1fr; gap: 0.8rem; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div id="customCursor">
+  <span class="cc-corner-l"></span>
+  <span class="cc-corner-r"></span>
+</div>
+
+<nav>
+  <a href="#hero" class="nav-logo">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAzwAAAFsCAYAAAAJ57wwAAAcxElEQVR4nO3dvXLjOBYGUHIsBa3ckQO//1utA0edy1UrermBV9u22xL1QxK4F+dEMzU11WyRBPDhAmD/n3//a+xgBm+Hx36325W+DABY3Hh4qXr81G+f+9LXALXYlL4A8vi1/T2Oh5//23v/1G82HjcA4huGoXsofRFnvPdPvR4X/vA+sIqH8fWvMGT2CYCIHsbXqqs7JhjhK28ExXxfDiAAAVA7S9kgHoGHanzuROwHAqA2wg7EJPBQpc/7gYQfAEqzbwfi8m5QPeEHgNLs24G4esdSE5XSPQBrsJQNYjMdQFjHDsiR1wAsRdiB+P4pfQFwr48jr1/G/X5f+lIASGQYhtKXcNZ7/yTswAVMi5PG570+ZrwAuJd9O5CDCg8pjYeXsfZlCADUq/Y+xMQeXE7gITVL3QC4lrADuQg8pPex1O1lrH0tNgDl1d5X2LcD1xN4aMbxcIPS1wFAvezbgXwEHppjfw8AP6m9b7CUDW4j8NAsy9wAOBJ2IC+Bh6ZZ5gZA7ZNf9u3AfQQe6FR7AFpm3w7kJvDA/6j2ALSn9nbfUja4n8AD39Te+QEwj9rbe2EH5iHwwA8scQPIrfY23r4dmI/AAydY4gaQl3070A6BByYIPQC51N6uW8oG8xJ44AK1d44AXKb29lzYgfkJPHCh2jtJAM6zbwfaJPDAFRxmABCXfTvQJoEHrvQwvgo9AMHUXqW3lA2WI/DADYQegDiEHWibwAM3EnoA6ld7O23fDixP4IE7CD0AdbNvBxB44E5CD0CdLGUDuk7ggVnUPoMI0BphBzgSeGAmtXeuAK2ovepu3w6sS+CBGQk9AOXVXnW3bwfWJfDAzIQegHJqb4MtZYP1CTywgNo7XICMam97hR0oI0xNVSOxnto7jCiGYbBsAWAlwzB0D6Uv4oz3/qnXI0AZ3j3+MhUu9/t992v7Wyia8LGGXFAHWIN9O8Ap/X/+/a+qG4gjFZ66qQqd5tkFWFbtfZB+AMoy3cAsvjfmtXc+axoPL6PODmAZtfc32n8oT+BhEZ8b+No7ozXYzwMwP/t2gEs4pY3F9dvnvt8+9y1/aK32teUAEdXetprogjoIPKxms9n8P/yUvpYSVLoA5lN7m9pqXwc1EngootXgs9/vS18CQHi1t6Ut9m9QM4GHoloLPo7zBrhfzW1py8u3oVYCD1VoKfjUvgwDoGa1t6H27UB9BB6q0srhBsMwlL4EgHBqDzutTNxBNAIP1TkeblD6OpZU+8lCALWxbwe4lcBDtbJXe2rvvAFqYt8OcCuBh6plrvbU3HkD1KT2pWz27UDdBB5CyBp6au/EAUqrvZ3M2j9BJgIPYWRf4gbAV7Uv/RV2IAaBh1AyLnGrffYSgL+ZgIM4LDolpH773AsKALntdruu6+qc5DKAgjhUeAgrU6VHeAMAWIbAQ2iZQg8AAPMTeAgvS+hR5QEAmJ/AQwpZQg8AAPMSeEgjQ+gZhqH0JQAApCLwkEr0Y0IfxlfL2gAAZiTwkMpm46BQAAD+EHhIJ/rSNocXAADMR+AhpeihBwCAeQg8pBV9Pw8AAPcTeEgr8n4ey9oAAOYh8JCapW0AAG0TeEjv7fAo9AAANErgIb3dblf6Em5iWRsAwP0EHprgAAMAgDYJPDQh8gEGAADcTuChGRGrPMMwlL4EAIDQBB6aEbHK8zC+2scDAHAHgYemRKzyAABwO4GHpkSs8gAAcDuBBwAASMt0N83pt899pG/cjIeXsd8+W4rHVYZhuHoPmOcMgIwEHoAArg3pDyv8Ge/9U2+ZKAC101MBVCJS5bHrPk4RHA8//zfVIgBqIfDQpGjL2sgn+/P3099PCAKgBIEHYAXZA84lvv8GAhAAaxB4IIBhGBypHcx+v+9+bX83H3LO+RyA3g6P/W63K3k5ACTV/+ff/wrRIZsJZG7RBqTegfqp4sxD+OGUCO9Y9rY6wj2gjJqffVPGNGu323WnNlzDpXT+8/u1/f3/wxCEH4AYal62LPAAXOmWb9xwm8/hp6bOE4DzjgGohokrgQfgQsfG+5Zv3HC/mjpPAC5Tw8SVwANwhmpOfWroPAG43nHiau0PVws8AD84Bh3VnLodO0/BByCO44er12q7/1njD4FaGSTx3TAM3Xh4GVV1YhkPL6MDJABiWavtFngAOkEnC8EHIJ6l222BB2iaoJPTeHgZ9/t96csA4EJLTlgJPBCEwdv8BJ3cPg43UO0BiGSJdlvggSB+bX8buM3Esqe2uN8AsczdZgs8QDOOy9dKXwdljIeXcRiG0pcBwAXmbLMFHqAJlq/RdcejUIVegAgextdZQo/AA6SmqsNPVHsAYpgj9Ag8QFqqOpyj2gMQw719ucADpGQgy6U8KwD1u6etFniAVPb7vQEsV7PEDaB+t/bvAg+Qxnh4GR3fza0scQOo3y3ttMADpGCgylw8SwB1u7adFniA0JzCxhI8UwB5CDxAWE5hY0n29QDU65qJKYEHCMkMPGuY66N3AMzv0rGAwAOEI+ywJocZAMQm8AChGHhSimcPoD6XtM0CDwTRb5/70tdQmgEnpXkGAeoztfRY4AFCMNCkFp5FgLpMHWAk8ADVM8CkNp5JgLqcq/IIPDTN6Uv1M7CkVp5NgHqcq/IIPDTNN1zqZkBJ7fb7felLAGCCwANUSdiZ19vhse+3z32/fe7f+6fmD8CYy6/tb9/pAajEqbHDZu0LAZgi7FzmmpP7dts//7zZbLquu/z/dT/O+/g46VP/8bsCUButM1AVg+u/vR0e+91uV+zP/ylYuU9ffSyPdXQ8QGn7/b773mcKPEA1DKI/fA84n6sztfgegty7j9/A97IAyvq1/f3XBJTAQ7MiDdDe+6c++8s6DEP3UPoiCnrv/yyJqjHgTPk80I/0bs1N6AGoj0MLIIAW9ga0emLe8SCBTPf4+Hd6Ozw2OfBvOfCRn0NPiOD7CZp5elggrNYGiJ+rOZl9LMv7qHa0do+HYWhiooL2XHvoCTFka6O/L2vTGtOk1pdP1SRbI3vOcalTiw3v8e/eyv12iAEQSfY22pI2mtTq8qnatPLRxuMSr9LXUYOWfousAwcgr6zfahN4gGI+Ss55vfdPzQzur5W1U/1O6AGi2Ww2V33nLQKBh+ZE+yp6tkbnKPtAMNtBBEs4dqqtHm4AULPo44/P4wyBh+ZYzlZe5rDT0pKtuex2u/Ad6zmZn3cgtyxts8ADrCpahe0aWTqGUjJXe4QeIKoM7bLAQ1MMOsrLWGFT1ZlP9moPQDQfnxiITeCBimUb+GUMnNnuUS0y/q4Zn3+gDdEPmRF4aEYrRyCznoyD8ppk/H21Q0BE0Q/hEXhoRvYjkGuXaXbbcdPryXZ8tXYIYH0CD00wq1pWpt/fcdPry/ZNiEzhHyACgYcmRJxVzTTAi/j7/yTTPYnI7w9QTuTT2gQe0jObWlaW399guw5Z7kOW9wJoR+TT2gQegAlZBtlZZLkfmb9JBVATgYfUos6iZhnQRf39P8tyL7LJcF8yfpMKyCtyny7wkFbkF5M6ZBhUZ5bh/qjyACxP4CGlyIOIyJsCP4seODMMplsQ/T6p8gAsT+AhpciDiMibAo8iB86ui/9F6dZEv1/R3xeA2gk8pBO9spBB5MDZdfG/KN2a6Pcr+vsC5Bf9e3oCD6lEDzvRl+dk4B7EFP2+qfIANYv+PT2BhzSizz5kETl0Rh80ty7y/VPlAWqVYUJG4CGFYRjCzz5E34cQXeTBMn+4jwDzijoh87k/EHgIbxiGsC/jZ9H3IXRd3OpOlpPxiC3q+wPklaVdEngILUvYMeAuK8PJePyhygNwvyxhp+sEHgLLEna6LseAO2rDaHCcU9T7GvU9AnLJ1hYJPISUKeyo7pTjtweArzKEne/7ogUewhkPL2OWsNN1Oao7UU9wyfDbc1rUKg9ACcMwpAg7Xff3vmiBh1CyvIhHWSoMEQOowXAbIp5+mK2dA+qXbTL5O4GHMDIOAlQYYFkZTj8EWEqmqs7RTxNdAg/V2+/36V7Gros58/yTiB98Vd1pS8T7HfG9AmLJWtX5aaJL4KFq4+FljP5B0VOyzDxnvT9QkvcKWErWieRzBB6qlP1ljDjjnIXfvk3uO0DuieSuO93W55hiJpWPl7H0VXCJaKH07fDY7zxbBLHf7+3zA2YRrb+emwoP1RgPL2MLL6SZ5nIMHtsW7d3LPAsLrCPjoQSnnGvjVXgorpUXseviDbgAgJjGw8v4UPoiKqHCQzGtVHSyinbvhE26Lt5zEPWjvkA5LVV1jqbadhUeVjUMQ8iPVM4h2kALKO+jvdR2AJdR1fmZwMMqjjMNrb6Ewk5Zfn8+ezs89vbHAJm0VtH57JI+XuBhMS2/fJ9lPBlsGIZmwyvx7Xa7bjyUvgqAebQ83rp0QlPgYTb7/d6pQj/IeDJYpGWJGQMnbRkPL6MqJfBdy0HnWgIPN/v+ovl2zt8MUsrLGDi5X7997g0WgIha3g/92TVjLIGHs1RtbifsAABzcijBh2vHWGECj5m4MlRtbvPeP/VhXq4rfYTg0ldxmcz3AYB2mID+45a+3Xd4YAGbTd5hdqQGN/N94H6RqrD7/b70JQCFjIeXMVLfu6S3w2N/S99uNAAzizSIAmL4GOxoW6AlVjf97dZ9uSo8MCNhpx5vh0f3AoBwhmEQdn5wzxhL4IGZCDt1cTobl3jvn7y3QDXGw8voBLa/3TvGEnhgBq2EHTNOZGOfF1ADVZ3T5hhjCTxwp1bCDlCWwRDkpKpz2lxjLFNbcAdhp07uCwC1c9T0eXP25QIP3MigGnLot8+96gmwpo+jpktfRZ3e+6ebjp4+R+CBGwg7AMC1TK6ct0TY6TqBB67WatgZhqF7KH0RABDQMAydfTrn9dvnfqlgIvDAFVoNO13XhWmo3w6P/c4yAQAqMR5eRhOG5y09vhJ44AJLlViZn+/vkNkwDI7ShiBUdaatNb5yLDVMEHYgvyjVW4MniMFR09P67fNq4yujODhjyfWkAEAujpqeVmIi2VgOTogy4wsAlOeo6WmlJpIFHvjGEjYA4FKOmp5WehLZqA4+sYQtNie0AbAWhxJMezs89jUcJmRsB52qThY1NKoA5Oeo6Wn99rmaSUgjPJqnqjNNuR4AHEpwiRonkeu6GlhRjS8kUE6/fe6Fe+AUhxJMq3USucZrgkUd15N6+AGAKSZCptU+iVzvlcECalpPCgDUTdiZVmtV57Parw9mUfo4RAAgDkFnWqSxlcBDapFeRoBLDMPQ1bx0BCJz1PS0Wo6avoYWk5QEHSCrj8GYNg7m5qjpaVG3Bgg8pCLoAADXcNT0tNoPJZgS98oBAOAOjpqeFuFQginRrx8AAK7iUIJp0as6n/1T+gJgThowAOCUYRiMFS7Qb5/ThJ2uU+EBAKABDiWYlnUvtAoP6Zi5aVPWRhqA+6jqTHs7PPaZ+1EVHgAAUlLVmRb1qOlrqPCQkpkcAGjXfr83Fpjw3j+lrup8JvAAKejYAOi641HTvqtzTrZDCaa08zelOePhZWxl5gIAWmfia1qr4yKBBwCAsIZh6B7GV2FnQqthp+sEnuZd8vBHnjFR5QGAvBxKMM04KFDgcbPK6bfPfeTQAwDkoqoz7b1/amqfzjkOLSA9YQ0A8hgPL6Owc15rhxJMEXi4iAobAFCSo6antXTU9DUEHpqggQSAuBw1PU1V5zS/ChezlwfIbL/fd7+Sf20cojHumKaiM02Fh2ZoNIFzzB5DPYZh0G9PeDs8Wr52IRUerqLKAwAsyVHT0/rtc79Tkb6YCg9NEdZu83Z4NIMEwKIcSjDNoQS3EXi4mhetPbvdrvQlAJCYQwmmOZTgdgIPzTF7lJd7CxDLeHgZtd3nqercT+DhJl48AOAegs40VZ15+AVp0nh4GYU24MiR1LAeQWeaMcq8VHi4mZcRyMLeAVieo6anOWp6GSo8NEuVBwDW4ajpaY6aXo4KD3d5758EBgDgJFWd8xxKsDyBh7tE30inEc7HPQWogyVs0xxKsA6Bh7up8rTB7BNZGZDB/MbDy/gwvnq3TlDVWZfAw92iz0wY7ADAfPSr56nqrM+vzSze+6feTA4AtE3YOU1FpxwVHmYRfaZiv9+XvgRm5H4CrMt+ndMcNV2ewMNsIu/l8Q2OXNxPLmWABvcbhqGzyuNn/fa53+12pS+jeQIPs1HlAYC2CDs/cyhBXQQeZqXKk5vGG4AjYednDiWoj8DDrKK/4Ko8eViqxBTvO9xO2Plbv31W1amUwMPsVHmACLzvcDth5w+HEtRP4GF2qjwAkJcK+h8OJYhB4GERb4fHsDMdZn3z0ClziokNuI129YNDCWIReFhE9NkOg6HTNPBkYGIDrifsfHAoQTwCD4tR5QGAHEwEqupEJvCwGFUeamBGku88E3C91icCVXViE3hYlCoPAMTW8iSBo6ZzEHhYlCpPTtEaf/eRI88CXKfVd8ZR07kIPCxOlYfS3EeOPAtwnRbfGUdN5yPwsLjojcYwDKUvgRm4j7Q6Uw23am0pm0MJ8hJ4WEXkKo+vSf/svX8KdU/dR1qcqQYu41CC3AQeVqHKk4+OgUi8w3CdVqo7qjptEHhYjSoPpbXSgfM37zDwnapOOwQeVqPKk0/EEOs+tsfeHbhO9skhR023R+CBC5kh/lvEEOs+tsfeHaDrHDXdMoGHVUVvaFQHcnAf26G6A9fJ+s44arptAg9cQXXgbxGXtbmP7VDdgetke2ccSkDXCTwUEL3hUR34KuqMWdZZTP7Ivg8BOM+hBBwJPHAl1YEcss1i8pWJCbhelvdGVYfvBB6KiN4QZekU5hLtI6RHKgB5mZiA62V4b1R1+InAAzfI0CnMKXLnIrzmI8hCm6JPprIcgYdiojdMBso5CK+5eC+hTdHHFCxL4IEbGSh/FbmzURHIw3sJ7Ym6rJr1CDwUFXmQTC5ObYtPcIXbRX5/Ii+rZh0CD9whcgexhMgB9tf292g5VFzeRWhT5H6H9Qg8FKexohaWQ8UkqAJwjsADdzKz/FX0tdTuZyzDMAiqAJwl8FAFVZ48MqylFnriEHagXcYOXErggRkYIH/1dngM3wm5p/VzjwC4hMBDNczU5LHb7UpfwiwMqOvl3gBwKYEHZmIA9lWGKk/X2RBfI+8aANcQeKiKKk8eWao8D+Pr6Bs99RB2ALiWwAMzMhj7KkuV59f29+jeluceAHALgYfqqPLkkaXKc2TAXY7fHoBbCTwwMwOzr6J/l+c793ddwzD4zQG4i8BDlVR58sjwXZ7vDMDXsd/vfWcHOElbzKUEHliARvirbFWernOPlzYeXsZf29+r/8YmWwDyEXioloFHHhmrPF33MSh3gtv8SoXJLIdsQEt8OoBLCDywEBWAr7IGWCe4zWe/3xd9b7IdsgEtsOyVSwg8VC3rILlVmWfQx8PLaKbxdqWWsB1lXHYJrTDpxBSBBxakEf4q+wz6w/iq2nOl0lWdo6zLLqEVJpw4R+ChemZec2mhamdvz7TjcdMlqzpHLTyTMCX6e/Awvqqyc5LAQ/Wiz7zWMHvN+o57e3TAfxsPL2Mt6+4zL7OE1qiyc4rAQwiqPLlEn0m8xrEDFnw+gk5tg5HsyyyhRdpcvhN4CEGVJ5+WQk/XtR18agw6XdfeMwgtOba5lhfTdV0XexRJU977p76WZTDM4+3w2Newh2NNH53wxz9nHnAPw1D1cbFvh8d+ty19FVCXjG3yx/Li0lfBWk71qwIPYWw2my5yozUeXsbMA9xb7Ha70Pf0Xseqx3v/1EevYh4d/04PpS9kgqVs8LfW22TyytHD0gxVnnz67XNf43KnNX2u+rwdHvtog/Fo98/EA0BbBB5CUeXJSej54/vyixqrP5Hv1Xv/1Nf1a0JdMi5rA+0+4ajy5KST/dnn6s/RmlWgyOHmJ7WFR6iNZW1kpOUnHFWenHSyl7tmE+6pZ632QwWW4L0DaJPAQ0iqPDlZ2ja/U79n7YcKzE3YgcvpY8nGd3gIKfqyFN8FOM3AlLl5puA60ftY+E7gIay3w2PYQYy9KucZoDKX9/7JswQ3iNzHwncCD2FFO7r3O1We84Qe5mCmGm4TvY+FzwQeQos8A6XKM03o4R6eH7iPCilZCDyEFn0GSpVnmg6XWwg7cD8VUrIQeAhPlSe3zWYj9HAVYQfm430iA4GH8FR58hN6uJTBGQDfCTykoMqTn9DDFGEHluHdIjqBhxRUedqw2Wx0vPzIcwHLMuFEZAIPaajytMPgls88D7A8BxgQmcBDGqo8bTHIpes8B7Am7xtRCTykosrTFp1v29x/WJ/3jogEHlJR5WlPv33uIwddbmPQBeV4/4hG4IGKqPLcZrfb2VDbiLfDY2+wBeVpc4lE4CGd6IOhYRhKX0JITnDL771/6qNXcSELnwogEoEHKvMwvqry3EHoyanfPvdOiYK6CD1EIfCQUvRBryrPffrtc68TziP6+wyZqa4TgcADFVLluZ9OOL73/sl+HQjCu0rNBB7Sit74qvLMQ7UnJkvYIJ7o/S55CTxQKVWe+aj2xKGqA7H5VAA1EnhILfrASZVnXv322WC6Yqo6kMNutwvf/5KLwAMVU+VZhmVudRFEISfVHmoh8JBe9IGUKs8yjsvcdMblWL4G+an2UAOBByqnyrOsY2cs+KznGHQsX4N2qORSksBDE6I3sqo8yxN8lifoAIIPJeh1IICPKo8OYg273a7ruud+GAbVtZm890/9ZrPR4QD/dww92lrWoP+hGf32uR8PL2Eb1WEYOjPj6/n4rT865MjPTUnHAY2nFjjlc1u73++7X9vf2ltmpx+CIFR5yjETeR3LVYBbHCvsx38XgJiLwENTold5KOvzTKTw85WQs573/qnXedfJvZnX9wB0ivaYKf04ej5oS/TAY2BZn1Y7W88iABEIPDQpcugxyKxf1mUYb4fH/mPGFQDiEHhoUuTA03VCT0QRn7nj6WoAEJnAQ7MiDkCPBJ4caloK55kCICuBh2ZFDjxdZ4DamlueV0vQAEDgoXGRQ4/AAwAw7Z/SFwDcJnJYAwBYi8BD01RJAAByE3ggMFUeAIDzBB6ap8oDAJCXwAPBqfIAAJwm8ED38YHF0tcAAMD8BB7oui761+RVeQAAfibwwP9Er/Ls9/vSlwAAUB2BB/4nepXn1/a3Kg8AwDcCD3wSvcpjaRsAwFcCD3wSvcrTdUIPAMBnAg98E73K03VdNwxD6UsAAKiCwAPfZKjyPIyvo9ADACDwwI8yVHkextfRyW0AQOv6cbTcH36SaS9Mv30OH+AAAG4h8MAJwzB0D+NrqhdE8AEAWiPwwBmZqjw/EYAAgOwEHjhjv9/7oCcAQGAOLYAzdrtd6UsAAOAOAg9MeDs8WvYFABCUwAMTVHkAAOISeOACqjwAADEJPHABVR4AgJgEHrjQe/+kygMAEIzAAxfabDalLwEAgCsJPHAFH+oEAIhF4AEAANISeOBKqjwAAHEIPHADoQcAIAaBBwAASEvggRup8gAA1E/ggTsIPQAAdRN44E4+SAoAUC+BB+602Wy6t8Oj0AMAUCGBB2aw2+1KXwIAAD8QeGAm9vMAANRH4IEZCT0AAHUReGBmQg8AQD0EHliA0AMAUAeBBxYi9AAAlCfwwIKEHgCAsgQeWJjQAwBQTj+OY+lrgCbs9/vu1/a3Fw4AYEUCD6xoGIbuYXz10gEArETggQLGw4sXDwBgBQIPFGKJGwDA8gQeKEy1BwBgOQIPVMDeHgCAZQg8UBHL3AAA5iXwQIUscwMAmIfAAxVT8QEAuI/AA0Go+gAAXE/ggYCEHwCAywg8kIClbwAAPxN4oBGqQgBAi/4LlaSfDvvNiNAAAAAASUVORK5CYII=" alt="Raíz">
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html">Inicio</a></li>
+    <li><a href="#tipografia">Tipografía</a></li>
+    <li><a href="#colores">Colores</a></li>
+    <li><a href="#recursos">Recursos</a></li>
+    <li><a href="#imagenes">Imágenes</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" aria-label="Menú">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html">Inicio</a>
+  <a href="#tipografia">Tipografía</a>
+  <a href="#colores">Colores</a>
+  <a href="#recursos">Recursos</a>
+  <a href="#imagenes">Imágenes</a>
+</div>
+
+
+<main>
+
+  <section class="guide-hero">
+    <p class="eyebrow">Sistema visual · index.html &amp; curso-tapizado.html</p>
+    <h1><span class="highlight-box"><span>BIBLIOTECA</span></span></h1>
+    <p>Referencia de todos los estilos, tipografías, colores e imágenes que se usan actualmente en el sitio de Raíz — para mantener todo consistente entre páginas.</p>
+  </section>
+
+  <!-- ── TIPOGRAFÍA ── -->
+  <section class="block" id="tipografia">
+    <div class="block-head">
+      <div>
+        <p class="block-num">01 — Tipografía</p>
+        <h2>Fuentes en uso</h2>
+      </div>
+      <p class="block-note">Poppins para títulos y elementos destacados. Archivo para cuerpo de texto y contenido general.</p>
+    </div>
+
+    <div class="type-row">
+      <div class="type-meta">
+        <span class="type-role">Hero Title</span>
+        <span class="type-spec">Poppins · 300
+clamp(2.4rem, 5vw, 4.8rem)
+lh 1.02 · ls -0.01em
+compartido por index.html
+y curso-tapizado.html</span>
+      </div>
+      <div class="type-sample poppins" style="font-size:clamp(2.4rem, 5vw, 4.8rem); font-weight:300; line-height:1.02; letter-spacing:-0.01em;">Tapizado<br><span style="position:relative; display:inline-block; text-decoration:underline; text-decoration-color:var(--crema); text-underline-offset:3px; color:var(--crema);"><span style="position:absolute; inset:-4px -8px; background:var(--rojo); z-index:-1;"></span><span style="position:relative; z-index:1;">contemporáneo</span></span></div>
+    </div>
+
+    <div class="type-row">
+      <div class="type-meta">
+        <span class="type-role">Section Title</span>
+        <span class="type-spec">Poppins · 300
+clamp(2.6rem, 4.5vw, 4.2rem)
+lh 1 – 1.08</span>
+      </div>
+      <div class="type-sample poppins" style="font-size:clamp(2.6rem, 4.5vw, 4.2rem); font-weight:300; line-height:1.05;">Mirar atrás para construir.</div>
+    </div>
+
+    <div class="type-row">
+      <div class="type-meta">
+        <span class="type-role">Section Label</span>
+        <span class="type-spec">Archivo · 700
+0.7rem · uppercase
+letter-spacing 0.22em</span>
+      </div>
+      <div class="type-sample archivo" style="font-size:0.7rem; font-weight:700; letter-spacing:0.22em; text-transform:uppercase;">Quiénes somos</div>
+    </div>
+
+    <div class="type-row">
+      <div class="type-meta">
+        <span class="type-role">Section Body</span>
+        <span class="type-spec">Archivo · 300
+1rem · lh 1.35
+max-width 420px</span>
+      </div>
+      <div class="type-sample archivo" style="font-size:1rem; font-weight:300; line-height:1.35; max-width:420px;">Somos un estudio de diseño y restauración fundado sobre una premisa: cada mueble tiene una historia que merece continuar.</div>
+    </div>
+
+    <div class="type-row">
+      <div class="type-meta">
+        <span class="type-role">Botón</span>
+        <span class="type-spec">Poppins · 600
+0.78rem · uppercase
+letter-spacing 0.1em</span>
+      </div>
+      <div class="type-sample poppins" style="justify-self:start; display:inline-block; font-size:0.78rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; padding:0.75rem 2rem; border:2px solid var(--negro);">Conocer más</div>
+    </div>
+
+    <div class="type-row">
+      <div class="type-meta">
+        <span class="type-role">Nav link</span>
+        <span class="type-spec">Archivo · 500
+0.78rem · uppercase
+letter-spacing 0.1em</span>
+      </div>
+      <div class="type-sample archivo" style="font-size:0.78rem; font-weight:500; letter-spacing:0.1em; text-transform:uppercase;">Servicios</div>
+    </div>
+
+    <div class="type-row">
+      <div class="type-meta">
+        <span class="type-role">Número estadística</span>
+        <span class="type-spec">Poppins · 600
+clamp(2.6rem, 5vw, 4.2rem)
+lh 1</span>
+      </div>
+      <div class="type-sample poppins" style="font-size:clamp(2.6rem, 5vw, 4.2rem); font-weight:600; line-height:1;">+200</div>
+    </div>
+
+    <div class="type-row">
+      <div class="type-meta">
+        <span class="type-role">Botón de card (VER CURSO)</span>
+        <span class="type-spec">Poppins · 600
+0.78rem · uppercase
+fondo --crema / texto --rojo
+hover: fondo transparente,
+texto y borde --crema
+(sobre fondo --rojo de la card)</span>
+      </div>
+      <div style="display:flex; gap:1rem; flex-wrap:wrap; background:var(--rojo); padding:1rem; justify-self:start;">
+        <div class="type-sample poppins" style="display:inline-block; font-size:0.78rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; padding:0.75rem 2rem; background:var(--crema); color:var(--rojo); border:2px solid var(--crema);">Ver curso</div>
+        <div class="type-sample poppins" style="display:inline-block; font-size:0.78rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; padding:0.75rem 2rem; background:transparent; color:var(--crema); border:2px solid var(--crema);">Ver curso</div>
+      </div>
+    </div>
+
+    <div class="type-row">
+      <div class="type-meta">
+        <span class="type-role">Precio destacado</span>
+        <span class="type-spec">Poppins · 700
+clamp(2.2rem, 4vw, 3.4rem)
+lh 1 / curso-tapizado.html</span>
+      </div>
+      <div class="type-sample poppins" style="font-size:clamp(2.2rem, 4vw, 3.4rem); font-weight:700; line-height:1;">$65.000</div>
+    </div>
+  </section>
+
+  <!-- ── COLORES ── -->
+  <section class="block block-azul" id="colores">
+    <div class="block-head">
+      <div>
+        <p class="block-num">02 — Colores</p>
+        <h2>Paleta</h2>
+      </div>
+      <p class="block-note">Definidos como variables CSS en :root, compartidas por ambas páginas del sitio.</p>
+    </div>
+
+    <div class="color-grid">
+      <div class="color-card">
+        <div class="color-swatch" style="background:#da3721;"></div>
+        <div class="color-body">
+          <div class="color-name">Rojo</div>
+          <span class="color-hex">#DA3721</span>
+          <p class="color-use">Fondo principal del hero y secciones cálidas; acento de botones y hovers.</p>
+          <span class="color-var">--rojo</span>
+        </div>
+      </div>
+      <div class="color-card">
+        <div class="color-swatch" style="background:#fefae0; border-bottom:1px solid rgba(0,0,0,0.1);"></div>
+        <div class="color-body">
+          <div class="color-name">Crema</div>
+          <span class="color-hex">#FEFAE0</span>
+          <p class="color-use">Fondo base del sitio y color de texto claro sobre fondos oscuros. Igual a --blanco.</p>
+          <span class="color-var">--crema / --blanco</span>
+        </div>
+      </div>
+      <div class="color-card">
+        <div class="color-swatch" style="background:#312783;"></div>
+        <div class="color-body">
+          <div class="color-name">Azul</div>
+          <span class="color-hex">#312783</span>
+          <p class="color-use">Fondo de secciones "Sobre nosotros" / "De qué se trata"; resalta la palabra clave del hero.</p>
+          <span class="color-var">--azul</span>
+        </div>
+      </div>
+      <div class="color-card">
+        <div class="color-swatch" style="background:#000000;"></div>
+        <div class="color-body">
+          <div class="color-name">Negro</div>
+          <span class="color-hex">#000000</span>
+          <p class="color-use">Texto principal sobre fondos claros.</p>
+          <span class="color-var">--negro</span>
+        </div>
+      </div>
+      <div class="color-card">
+        <div class="color-swatch" style="background:#f07030;"></div>
+        <div class="color-body">
+          <div class="color-name">Naranja</div>
+          <span class="color-hex">#F07030</span>
+          <p class="color-use">Acento de hover en botones crema (btn-crema).</p>
+          <span class="color-var">--naranja</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── RECURSOS ── -->
+  <section class="block block-naranja" id="recursos">
+    <div class="block-head">
+      <div>
+        <p class="block-num">03 — Recursos</p>
+        <h2>Componentes visuales</h2>
+      </div>
+      <p class="block-note">Elementos decorativos que se repiten en todo el sitio: el subrayado de los títulos, la grilla de fondo y las formas geométricas.</p>
+    </div>
+
+    <div class="resource-row">
+      <div class="resource-meta">
+        <span class="resource-name">Rectángulo subrayado</span>
+        <span class="resource-spec">.highlight-box
+fondo --azul
+underline --crema
+inset -4px -8px</span>
+      </div>
+      <div class="resource-demo">
+        <p class="underline-demo">Diseñamos <span class="highlight-box">futuros</span>.</p>
+      </div>
+    </div>
+
+    <div class="resource-row">
+      <div class="resource-meta">
+        <span class="resource-name">Grilla técnica</span>
+        <span class="resource-spec">.grid-canvas / .grid-svg
+data-step: 120 (la mayoría)
+data-step: 100 (heroes)
+data-color: variable por sección
+dibujada con JS al hacer scroll</span>
+      </div>
+      <div class="resource-demo">
+        <div class="grid-swatch"></div>
+      </div>
+    </div>
+
+    <div class="resource-row">
+      <div class="resource-meta">
+        <span class="resource-name">Favicon</span>
+        <span class="resource-spec">icono-silla.svg
+&lt;link rel="icon"&gt;
+silla azul en cuadrado crema</span>
+      </div>
+      <div class="resource-demo">
+        <img src="icono-silla.svg" alt="Favicon — silla azul" style="width:56px; height:56px; border:1px solid rgba(0,0,0,0.15);">
+      </div>
+    </div>
+
+    <div class="resource-row">
+      <div class="resource-meta">
+        <span class="resource-name">Formas geométricas</span>
+        <span class="resource-spec">Círculo grande, circulito y marco
+usados como acentos y
+transiciones entre secciones</span>
+      </div>
+      <div class="resource-demo">
+        <div class="shape-set">
+          <div class="shape-item">
+            <div class="shape-circle"></div>
+            <span class="shape-label">Círculo<br>.servicios-circle</span>
+          </div>
+          <div class="shape-item">
+            <div class="shape-diamond"></div>
+            <span class="shape-label">Circulito<br>.diamond-bottom</span>
+          </div>
+          <div class="shape-item">
+            <div class="shape-frame">
+              <span class="corner-l"></span>
+              <span class="corner-r"></span>
+            </div>
+            <span class="shape-label">Marco (esquinas circulares)<br>.hero-spot-frame</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── IMÁGENES ── -->
+  <section class="block block-rojo" id="imagenes">
+    <div class="block-head">
+      <div>
+        <p class="block-num">04 — Imágenes</p>
+        <h2>Assets del sitio</h2>
+      </div>
+      <p class="block-note">Ejemplo real del hero de index.html: pasá el mouse sobre la imagen para revelar el sillón restaurado dentro de la ventanita, igual que en el sitio.</p>
+    </div>
+
+    <div class="spot-demo">
+      <div class="spot-wrap" id="spotWrap">
+        <div class="spot-stack" id="spotStack">
+          <img class="img-base" src="sillonheroviejo.png" alt="Sillón antes de restaurar">
+          <img class="img-reveal" src="sillonherofinal.jpg" alt="Sillón restaurado">
+          <div class="spot-frame" id="spotFrame">
+            <span class="corner-l"></span>
+            <span class="corner-r"></span>
+          </div>
+        </div>
+      </div>
+      <div class="spot-label">
+        <span class="file-role">Hero index.html</span>
+        sillonheroviejo.png ⇄ sillonherofinal.jpg
+      </div>
+    </div>
+
+    <div class="fade-demo">
+      <div class="fade-img-stack">
+        <img class="img-base" src="plano-mesita.png" alt="Plano técnico de restauración">
+        <img class="img-hover" src="plano-mesita-diagrama.png" alt="Diagrama detallado de restauración">
+      </div>
+      <div class="spot-label">
+        <span class="file-role">Servicios index.html</span>
+        plano-mesita.png ⇄ plano-mesita-diagrama.png
+      </div>
+    </div>
+    <div class="asset-gallery">
+      <div class="asset-card">
+        <img src="profe3.png" alt="Instructora del curso de tapizado">
+        <div class="spot-label">
+          <span class="file-role">Instructora — curso-tapizado.html</span>
+          profe3.png
+        </div>
+      </div>
+      <div class="asset-card">
+        <img src="ChatGPT_Image_18_jun_2026__05_25_46_p_m_.png" alt="Banquito de madera rayada restaurado">
+        <div class="spot-label">
+          <span class="file-role">Pieza restaurada</span>
+          ChatGPT_Image_18_jun_2026__05_25_46_p_m_.png
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+
+<script>
+  // Spotlight — misma lógica que el hero de index.html: al mover el cursor
+  // sobre la imagen, revela la segunda dentro de un cuadrado nítido.
+  const spotWrap = document.getElementById('spotWrap');
+  const spotStack = document.getElementById('spotStack');
+  const SPOT_SIZE = 220; // debe coincidir con .spot-frame, igual que en index.html
+
+  spotWrap.addEventListener('mousemove', (e) => {
+    const rect = spotStack.getBoundingClientRect();
+    const px = e.clientX - rect.left;
+    const py = e.clientY - rect.top;
+    const half = SPOT_SIZE / 2;
+
+    const layoutW = spotStack.offsetWidth;
+    const layoutH = spotStack.offsetHeight;
+    const xFrac = px / rect.width;
+    const yFrac = py / rect.height;
+    const lx = xFrac * layoutW;
+    const ly = yFrac * layoutH;
+
+    spotStack.style.setProperty('--hx', (xFrac * 100) + '%');
+    spotStack.style.setProperty('--hy', (yFrac * 100) + '%');
+
+    const top = Math.max(0, ((ly - half) / layoutH) * 100);
+    const bottom = Math.max(0, ((layoutH - (ly + half)) / layoutH) * 100);
+    const left = Math.max(0, ((lx - half) / layoutW) * 100);
+    const right = Math.max(0, ((layoutW - (lx + half)) / layoutW) * 100);
+
+    spotStack.style.setProperty('--ry', top + '%');
+    spotStack.style.setProperty('--ry-b', bottom + '%');
+    spotStack.style.setProperty('--rx', left + '%');
+    spotStack.style.setProperty('--rx-r', right + '%');
+
+    spotWrap.classList.add('active');
+  });
+
+  spotWrap.addEventListener('mouseleave', () => {
+    spotWrap.classList.remove('active');
+  });
+</script>
+
+<script>
+  // Hamburguesa (igual que index.html)
+  const ham = document.getElementById('hamburger');
+  const menu = document.getElementById('mobileMenu');
+  ham.addEventListener('click', () => menu.classList.toggle('open'));
+  menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => menu.classList.remove('open')));
+
+  // Navbar scroll (igual que index.html)
+  const navbar = document.querySelector('nav');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 50);
+  });
+</script>
+
+<script>
+  // ── Cursor personalizado: cuadradito que sigue al mouse en toda la web (igual que index.html) ──
+  const customCursor = document.getElementById('customCursor');
+  const darkSections = ['.block-azul', '.block-rojo'];
+
+  document.addEventListener('mousemove', (e) => {
+    const elUnderCursor = document.elementFromPoint(e.clientX, e.clientY);
+
+    customCursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
+    customCursor.classList.add('visible');
+
+    // si el cursor está sobre una sección de fondo oscuro/saturado, cambia a color claro
+    const overDark = elUnderCursor && elUnderCursor.closest(darkSections.join(','));
+    customCursor.classList.toggle('on-dark', !!overDark);
+  });
+
+  document.addEventListener('mouseleave', () => {
+    customCursor.classList.remove('visible');
+  });
+</script>
+
+</body>
+</html>
