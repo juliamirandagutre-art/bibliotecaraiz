@@ -311,25 +311,25 @@
   .block-rojo .resource-row { border-color: rgba(253,240,237,0.24); }
 
   .block-naranja {
-    background: var(--rojo);
-    color: var(--crema);
-    border-top-color: var(--crema);
+    background: var(--crema);
+    color: var(--negro);
+    border-top-color: var(--rojo);
   }
   .block-naranja .block-num,
   .block-naranja .type-role,
-  .block-naranja .resource-name { color: var(--crema); }
+  .block-naranja .resource-name { color: var(--negro); }
   .block-naranja .block-note,
   .block-naranja .type-spec,
-  .block-naranja .resource-spec { color: rgba(253,240,237,0.75); }
+  .block-naranja .resource-spec { color: rgba(0,0,0,0.6); }
   .block-naranja .type-row,
-  .block-naranja .resource-row { border-color: rgba(253,240,237,0.28); }
+  .block-naranja .resource-row { border-color: rgba(0,0,0,0.15); }
 
   .block-azul .shape-item .shape-label,
-  .block-rojo .shape-item .shape-label,
-  .block-naranja .shape-item .shape-label { color: rgba(253,240,237,0.7); }
+  .block-rojo .shape-item .shape-label { color: rgba(253,240,237,0.7); }
+  .block-naranja .shape-item .shape-label { color: rgba(0,0,0,0.5); }
   .block-azul .shape-frame,
-  .block-rojo .shape-frame,
-  .block-naranja .shape-frame { border-color: var(--crema); }
+  .block-rojo .shape-frame { border-color: var(--crema); }
+  .block-naranja .shape-frame { border-color: var(--negro); }
 
   /* ── TIPOGRAFÍA ── */
   .type-row {
@@ -413,7 +413,7 @@
   .resource-name {
     font-family: 'Poppins', sans-serif;
     font-size: 0.95rem;
-    font-weight: 600;
+    font-weight: 400;
   }
   .resource-spec {
     font-family: monospace;
@@ -437,8 +437,7 @@
     color: var(--negro);
   }
   .block-azul .underline-demo,
-  .block-rojo .underline-demo,
-  .block-naranja .underline-demo { color: var(--crema); }
+  .block-rojo .underline-demo { color: var(--crema); }
   .underline-demo .highlight-box {
     position: relative;
     display: inline-block;
@@ -601,7 +600,8 @@
     font-size: 0.72rem;
     color: rgba(0,0,0,0.6);
   }
-  .block-rojo .spot-label { color: rgba(253,240,237,0.75); }
+  .block-rojo .spot-label,
+  .block-azul .spot-label { color: rgba(253,240,237,0.75); }
   .spot-label .file-role {
     display: block;
     font-family: 'Poppins', sans-serif;
@@ -703,7 +703,7 @@
 
   <section class="guide-hero">
     <p class="eyebrow">Sistema visual · index.html &amp; curso-tapizado.html</p>
-    <h1><span class="highlight-box"><span>BIBLIOTECA</span></span></h1>
+    <h1><span class="highlight-box"><span>Biblioteca</span></span></h1>
     <p>Referencia de todos los estilos, tipografías, colores e imágenes que se usan actualmente en el sitio de Raíz — para mantener todo consistente entre páginas.</p>
   </section>
 
@@ -954,7 +954,7 @@ transiciones entre secciones</span>
   </section>
 
   <!-- ── IMÁGENES ── -->
-  <section class="block block-rojo" id="imagenes">
+  <section class="block block-azul" id="imagenes">
     <div class="block-head">
       <div>
         <p class="block-num">04 — Imágenes</p>
